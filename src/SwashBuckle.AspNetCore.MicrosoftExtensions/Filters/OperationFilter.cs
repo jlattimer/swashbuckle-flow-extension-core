@@ -25,8 +25,18 @@ namespace SwashBuckle.AspNetCore.MicrosoftExtensions.Filters
 
         private static IEnumerable<KeyValuePair<string, object>> GetOperationExtensions(ApiDescription apiDescription)
         {
-            var metadataAttribute = apiDescription.ActionAttributes().OfType<MetadataAttribute>().SingleOrDefault();
-            var dynamicSchemaAttribute = apiDescription.ActionAttributes().OfType<DynamicSchemaLookupAttribute>().SingleOrDefault();
+            if (!apiDescription.TryGetMethodInfo(out MethodInfo methodInfo))
+                return null;
+
+            if (methodInfo.DeclaringType == null)
+                return null;
+
+            var metadataAttribute = methodInfo.DeclaringType
+                .GetCustomAttributes(true)
+                .OfType<MetadataAttribute>().SingleOrDefault();
+            var dynamicSchemaAttribute = methodInfo.DeclaringType
+                .GetCustomAttributes(true)
+                .OfType<DynamicSchemaLookupAttribute>().SingleOrDefault();
             var extensions = metadataAttribute.GetSwaggerOperationExtensions();
             return extensions.Concat(dynamicSchemaAttribute.GetSwaggerExtensions());
         }

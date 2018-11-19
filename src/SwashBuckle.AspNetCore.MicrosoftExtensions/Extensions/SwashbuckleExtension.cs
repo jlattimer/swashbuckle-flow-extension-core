@@ -17,6 +17,7 @@ namespace SwashBuckle.AspNetCore.MicrosoftExtensions.Extensions
         {
             options.OperationFilter<OperationFilter>();
             options.SchemaFilter<SchemaFilter>();
+            options.ParameterFilter<ParameterFilter>();            
 
             if (filePicker != null)
                 options.DocumentFilter<CapabilityFilter>(filePicker);
